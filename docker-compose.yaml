@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    image: streamlit_apt:1.0
+    container_name: streamlit_apt
+    command: streamlit run streamlit_apt.py --server.port=8501 --server.address=0.0.0.0
+    volumes:
+      - ./app:/code
+    ports:
+      - 8501:8501
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD_2}
+    tty: true
+    restart: always
+
+networks:
+  default:
+    external: true
+    name: npm_net
