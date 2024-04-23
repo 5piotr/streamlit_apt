@@ -8,8 +8,6 @@ services:
       - ./app:/code
     ports:
       - 8501:8501
-    environment:
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD_2}
     tty: true
     restart: always
 
