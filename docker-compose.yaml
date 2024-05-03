@@ -3,7 +3,7 @@ services:
     build: .
     image: streamlit_apt:1.0
     container_name: streamlit_apt
-    command: streamlit run streamlit_apt.py --server.port=8501 --server.address=0.0.0.0
+    command: streamlit run monthly_data.py --server.port=8501 --server.address=0.0.0.0
     volumes:
       - ./app:/code
     ports:
