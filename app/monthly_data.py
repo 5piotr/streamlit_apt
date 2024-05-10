@@ -118,7 +118,7 @@ fig = px.scatter_mapbox(df,
                         size_max=20,
                         opacity=1,
                         color_continuous_scale=px.colors.sequential.Jet,
-                        height=600,
+                        height=800,
                         title='Prices of sq m')
 fig.update_layout(mapbox_style='light')
 st.plotly_chart(fig, theme='streamlit', use_container_width=True)
