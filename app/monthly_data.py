@@ -17,7 +17,7 @@ st.markdown(hide_decoration_bar_style, unsafe_allow_html=True)
 # date selectbox
 dates = conn.query('''
                       select distinct date
-                      from apt_details_raw
+                      from apt_details
                       ''').values.reshape(-1)
 dates = list(map(lambda x: str(x).replace('T',' '), dates))
 dates = reversed(dates)
