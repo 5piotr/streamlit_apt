@@ -49,18 +49,10 @@ st.link_button('Home', 'https://piotrpietka.pl')
 st.title('Apartment market trends')
 st.subheader(f'City: {city}')
 
-# median and average prices
+# median prices
 df_med= df[['date','price_of_sqm']].groupby('date').median().reset_index()
-df_med['metric'] = 'median'
-df_avg= df[['date','price_of_sqm']].groupby('date').mean().reset_index()
-df_avg['metric'] = 'average'
-df_med_avg = pd.concat([df_med, df_avg])
-fig = px.line(df_med_avg, x='date', y='price_of_sqm',
-              title='Median and average of price of sq m',
-              color='metric',
-              color_discrete_map={
-                       'median': px.colors.qualitative.G10_r[4],
-                       'average': px.colors.qualitative.G10_r[3]})
+fig = px.line(df_med, x='date', y='price_of_sqm',
+              title='Median price of sq m')
 st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 # price in relation to area
