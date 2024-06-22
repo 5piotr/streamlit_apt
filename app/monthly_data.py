@@ -3,7 +3,9 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 
-st.set_page_config(layout='wide')
+st.set_page_config(page_title='apartment market monthly data', layout='wide')
+
+st.cache_data.clear()
 
 conn = st.connection('airflow_db')
 
