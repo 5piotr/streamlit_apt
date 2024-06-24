@@ -2,6 +2,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 import numpy as np
+import colorsys
 
 st.set_page_config(page_title='apartment market trends', layout='wide')
 
@@ -59,7 +60,7 @@ st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 # price in relation to area
 df_list = []
-for date in df.date.unique():
+for date in reversed(df.date.unique()):
     temp = df[df.date==date][['area','price_of_sqm']].copy()
     temp['bins'] = pd.cut(temp.area,
                             bins=np.linspace(temp.area.min(),
@@ -70,9 +71,17 @@ for date in df.date.unique():
     df_list.append(temp)
 df_bins = pd.concat(df_list)
 
+def get_n_hexcol(n=5):
+    hsv_tuples = [(0.9, 1, x * 1.0 / n) for x in range(n-1, -1, -1)]
+    hex_out = []
+    for rgb in hsv_tuples:
+        rgb = map(lambda x: int(x * 255), colorsys.hsv_to_rgb(*rgb))
+        hex_out.append('#%02x%02x%02x' % tuple(rgb))
+    return hex_out
+
 fig = px.line(df_bins, x='area', y='price_of_sqm', color='date',
               title='Median of price of sq m in relation to area',
-              color_discrete_sequence=px.colors.sequential.Sunsetdark)
+              color_discrete_sequence=get_n_hexcol(df_bins.date.nunique()))
 st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 # price box plot
