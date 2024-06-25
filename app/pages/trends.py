@@ -56,6 +56,7 @@ st.subheader(f'City: {city}')
 df_med= df[['date','price_of_sqm']].groupby('date').median().reset_index()
 fig = px.line(df_med, x='date', y='price_of_sqm',
               title='Median price of sq m')
+fig.update_traces(line_color=px.colors.qualitative.D3[0])
 st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 # price in relation to area
@@ -72,7 +73,7 @@ for date in reversed(df.date.unique()):
 df_bins = pd.concat(df_list)
 
 def get_n_hexcol(n=5):
-    hsv_tuples = [(0.9, 1, x * 1.0 / n) for x in range(n-1, -1, -1)]
+    hsv_tuples = [(0.35, 1, x * 1 / n) for x in range(n-1, -1, -1)]
     hex_out = []
     for rgb in hsv_tuples:
         rgb = map(lambda x: int(x * 255), colorsys.hsv_to_rgb(*rgb))

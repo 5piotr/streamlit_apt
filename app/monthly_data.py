@@ -59,23 +59,18 @@ st.link_button('Home', 'https://piotrpietka.pl')
 
 # tittles
 st.title('Apartment market monthly data')
-st.subheader(f'Date: {date[:10]}, City: {city}')
+st.subheader(f':gray[Date:] {date[:10]} | :gray[City:] {city}')
 
-# price distribution
-fig = px.histogram(df, x='price_of_sqm', color='market', log_x=False,
-                   barmode='group', nbins=50,
-                   title='Price of sq m distribution',
-                   color_discrete_map={
+# price boxplots
+medians = df[df.city.isin(cities)][['city','price_of_sqm']]\
+    .groupby('city').median()
+medians = medians.sort_values('price_of_sqm', ascending=False)
+fig = px.box(df[df.city.isin(cities)], x='city', y='price_of_sqm',
+             color='market', title='Prices of sq m in main cities',
+             color_discrete_map={
                        'aftermarket': px.colors.qualitative.D3_r[0],
-                       'primary_market': px.colors.qualitative.D3_r[1]})
-st.plotly_chart(fig, theme='streamlit', use_container_width=True)
-
-# area distribution
-fig = px.histogram(df, x='area', color='market', log_x=False,
-                   barmode='group', nbins=50, title='Area distribution',
-                   color_discrete_map={
-                       'aftermarket': px.colors.qualitative.D3_r[0],
-                       'primary_market': px.colors.qualitative.D3_r[1]})
+                       'primary_market': px.colors.qualitative.D3_r[1]},
+             points=False, category_orders={'city': medians.index}, height=600)
 st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 # price of sqm in relation to area
@@ -93,16 +88,21 @@ fig = px.line(df_bins, x='area', y='price_of_sqm', color='market',
                        'primary_market': px.colors.qualitative.D3_r[1]})
 st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
-# price boxplots
-medians = df[df.city.isin(cities)][['city','price_of_sqm']]\
-    .groupby('city').median()
-medians = medians.sort_values('price_of_sqm', ascending=False)
-fig = px.box(df[df.city.isin(cities)], x='city', y='price_of_sqm',
-             color='market', title='Prices of sq m in main cities',
-             color_discrete_map={
+# price distribution
+fig = px.histogram(df, x='price_of_sqm', color='market', log_x=False,
+                   barmode='group', nbins=50,
+                   title='Price of sq m distribution',
+                   color_discrete_map={
                        'aftermarket': px.colors.qualitative.D3_r[0],
-                       'primary_market': px.colors.qualitative.D3_r[1]},
-             points=False, category_orders={'city': medians.index}, height=600)
+                       'primary_market': px.colors.qualitative.D3_r[1]})
+st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+
+# area distribution
+fig = px.histogram(df, x='area', color='market', log_x=False,
+                   barmode='group', nbins=50, title='Area distribution',
+                   color_discrete_map={
+                       'aftermarket': px.colors.qualitative.D3_r[0],
+                       'primary_market': px.colors.qualitative.D3_r[1]})
 st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 # price of sqm map
