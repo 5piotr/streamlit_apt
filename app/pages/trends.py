@@ -50,7 +50,7 @@ st.link_button('Home', 'https://piotrpietka.pl')
 
 # tittles
 st.title('Apartment market trends')
-st.subheader(f'City: {city}')
+st.subheader(f':gray[City:] {city}')
 
 # median prices
 df_med= df[['date','price_of_sqm']].groupby('date').median().reset_index()
