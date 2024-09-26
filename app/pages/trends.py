@@ -59,6 +59,20 @@ fig = px.line(df_med, x='date', y='price_of_sqm',
 fig.update_traces(line_color=px.colors.qualitative.D3[0])
 st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
+# new apartments market share
+df_share = df[['date','market','area']].pivot_table(index='date',
+                                                    columns='market',
+                                                    values='area',
+                                                    aggfunc='count')
+df_share.reset_index(inplace=True)
+df_share['new_apt_share'] = df_share.primary_market / \
+    (df_share.aftermarket + df_share.primary_market)
+
+fig = px.line(df_share, x='date', y='new_apt_share',
+              title='New apartments market share')
+fig.update_traces(line_color=px.colors.qualitative.D3[1])
+st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+
 # price in relation to area
 df_list = []
 for date in reversed(df.date.unique()):
