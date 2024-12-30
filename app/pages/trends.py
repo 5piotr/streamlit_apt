@@ -4,7 +4,9 @@ import pandas as pd
 import numpy as np
 import colorsys
 
-st.set_page_config(page_title='apartment market trends', layout='wide')
+st.set_page_config(page_title='apartment market trends',
+                   layout='wide',
+                   page_icon=':chart_with_upwards_trend:')
 
 st.cache_data.clear()
 
