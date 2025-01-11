@@ -54,26 +54,57 @@ st.link_button('Home', 'https://piotrpietka.pl')
 st.title('Apartment market trends')
 st.subheader(f':gray[City:] {city}')
 
-# median prices
-df_med= df[['date','price_of_sqm']].groupby('date').median().reset_index()
-fig = px.line(df_med, x='date', y='price_of_sqm',
-              title='Median price of sq m')
-fig.update_traces(line_color=px.colors.qualitative.D3[0])
-st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+col1, col2 = st.columns(2)
 
-# new apartments market share
-df_share = df[['date','market','area']].pivot_table(index='date',
-                                                    columns='market',
-                                                    values='area',
-                                                    aggfunc='count')
-df_share.reset_index(inplace=True)
-df_share['new_apt_share'] = df_share.primary_market / \
-    (df_share.aftermarket + df_share.primary_market)
+with col1:
+    # median prices
+    df_med= df[['date','price_of_sqm']].groupby('date').median().reset_index()
+    fig = px.line(df_med, x='date', y='price_of_sqm',
+                title='Median price of sq m')
+    fig.update_traces(line_color=px.colors.qualitative.D3[0])
+    st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
-fig = px.line(df_share, x='date', y='new_apt_share',
-              title='New apartments market share')
-fig.update_traces(line_color=px.colors.qualitative.D3[1])
-st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+with col2:
+    # median prices by city
+    df_med_city= df[df.city.isin(cities)][['date','city','price_of_sqm']] \
+        .groupby(['date','city']).median().reset_index()
+    fig = px.line(df_med_city, x='date', y='price_of_sqm',
+                title='Median price of sq m by city', color='city',
+                color_discrete_sequence= px.colors.qualitative.Alphabet)
+    st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+
+col3, col4 = st.columns(2)
+
+with col3:
+    # new apartments market share
+    df_share = df[['date','market','area']].pivot_table(index='date',
+                                                        columns='market',
+                                                        values='area',
+                                                        aggfunc='count')
+    df_share.reset_index(inplace=True)
+    df_share['new_apt_share'] = df_share.primary_market / \
+        (df_share.aftermarket + df_share.primary_market)
+
+    fig = px.line(df_share, x='date', y='new_apt_share',
+                title='New apartments market share')
+    fig.update_traces(line_color=px.colors.qualitative.D3[1])
+    st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+
+with col4:
+    # new apartments market share by city
+    df_share_city = df[df.city.isin(cities)][['date','city','market','area']] \
+        .pivot_table(index=['date','city'],
+                    columns='market',
+                    values='area',
+                    aggfunc='count')
+    df_share_city.reset_index(inplace=True)
+    df_share_city['new_apt_share'] = df_share_city.primary_market / \
+        (df_share_city.aftermarket + df_share_city.primary_market)
+
+    fig = px.line(df_share_city, x='date', y='new_apt_share', color='city',
+                title='New apartments market share by city',
+                color_discrete_sequence= px.colors.qualitative.Alphabet)
+    st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 # price in relation to area
 df_list = []

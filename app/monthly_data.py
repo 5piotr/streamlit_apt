@@ -75,20 +75,37 @@ fig = px.box(df[df.city.isin(cities)], x='city', y='price_of_sqm',
              points=False, category_orders={'city': medians.index}, height=600)
 st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
-# price of sqm in relation to area
-df_bins = df[['area','price_of_sqm','market']].copy()
-df_bins['bins'] = pd.cut(df_bins.area,
-                         bins=np.linspace(df_bins.area.min(),
-                                          df_bins.area.max(), 15))
-df_bins = df_bins[['area','price_of_sqm','market','bins']]\
-    .groupby(['bins','market']).median().reset_index()
+col1, col2 = st.columns(2)
 
-fig = px.line(df_bins, x='area', y='price_of_sqm', color='market',
-              title='Median of price of sq m in relation to area',
-              color_discrete_map={
-                       'aftermarket': px.colors.qualitative.D3_r[0],
-                       'primary_market': px.colors.qualitative.D3_r[1]})
-st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+with col1:
+    # price of sqm in relation to area
+    df_bins = df[['area','price_of_sqm','market']].copy()
+    df_bins['bins'] = pd.cut(df_bins.area,
+                            bins=np.linspace(df_bins.area.min(),
+                                            df_bins.area.max(), 15))
+    df_bins = df_bins[['area','price_of_sqm','market','bins']]\
+        .groupby(['bins','market']).median().reset_index()
+
+    fig = px.line(df_bins, x='area', y='price_of_sqm', color='market',
+                title='Median of price of sq m in relation to area',
+                color_discrete_map={
+                        'aftermarket': px.colors.qualitative.D3_r[0],
+                        'primary_market': px.colors.qualitative.D3_r[1]})
+    st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+
+with col2:
+# price of sqm in relation to area by city
+    df_bins_city = df[df.city.isin(cities)][['area','price_of_sqm','city']].copy()
+    df_bins_city['bins'] = pd.cut(df_bins_city.area,
+                            bins=np.linspace(df_bins_city.area.min(),
+                                            df_bins_city.area.max(), 15))
+    df_bins_city = df_bins_city[['area','price_of_sqm','city','bins']]\
+        .groupby(['bins','city']).median().reset_index()
+
+    fig = px.line(df_bins_city, x='area', y='price_of_sqm', color='city',
+                title='Median of price of sq m in relation to area by city',
+                color_discrete_sequence= px.colors.qualitative.Alphabet)
+    st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 # price distribution
 fig = px.histogram(df, x='price_of_sqm', color='market', log_x=False,
