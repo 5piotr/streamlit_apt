@@ -47,6 +47,23 @@ if city!='All':
 df = conn.query(query, index_col='id')
 df.date = df.date.dt.strftime('%Y-%m-%d')
 
+# getting data raw
+query2 = f'''
+        select
+            id,
+            date,
+            city,
+            price
+        from apt_details_raw
+        '''
+if city!='All':
+    query2 += f" where city='{city}'"
+
+df_raw = conn.query(query2, index_col='id')
+df_raw.date = df_raw.date.dt.strftime('%Y-%m-%d')
+df_raw['is_price'] = \
+    df_raw.price.apply(lambda x: 'no_price' if x=='Zapytajoce' else 'price')
+
 # home button
 st.link_button('Home', 'https://piotrpietka.pl')
 
@@ -103,6 +120,39 @@ with col4:
 
     fig = px.line(df_share_city, x='date', y='new_apt_share', color='city',
                 title='New apartments market share by city',
+                color_discrete_sequence= px.colors.qualitative.Alphabet)
+    st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+
+col5, col6 = st.columns(2)
+
+with col5:
+    # priceless apartments market share
+    df_share_p = df_raw[['date','is_price','price']].pivot_table(index='date',
+                                                            columns='is_price',
+                                                            values='price',
+                                                            aggfunc='count')
+    df_share_p.reset_index(inplace=True)
+    df_share_p['priceless_apt_share'] = df_share_p.no_price / \
+        (df_share_p.price + df_share_p.no_price)
+
+    fig = px.line(df_share_p, x='date', y='priceless_apt_share',
+                title='Priceless apartments market share')
+    fig.update_traces(line_color=px.colors.qualitative.D3[1])
+    st.plotly_chart(fig, theme='streamlit', use_container_width=True)
+
+with col6:
+    # priceless apartments market share
+    df_share_p_city = df_raw[df_raw.city.isin(cities)]\
+        [['date','is_price','price','city']].pivot_table(index=['date','city'],
+                                                         columns='is_price',
+                                                         values='price',
+                                                         aggfunc='count')
+    df_share_p_city.reset_index(inplace=True)
+    df_share_p_city['priceless_apt_share'] = df_share_p_city.no_price / \
+        (df_share_p_city.price + df_share_p_city.no_price)
+
+    fig = px.line(df_share_p_city, x='date', y='priceless_apt_share', color='city',
+                title='Priceless apartments market share',
                 color_discrete_sequence= px.colors.qualitative.Alphabet)
     st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
