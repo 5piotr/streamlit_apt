@@ -94,7 +94,7 @@ col3, col4 = st.columns(2)
 
 with col3:
     # new apartments market share
-    df_share = df[['date','market','area']].pivot_table(index='date',
+    df_share = df_raw[['date','market','area']].pivot_table(index='date',
                                                         columns='market',
                                                         values='area',
                                                         aggfunc='count')
@@ -109,7 +109,7 @@ with col3:
 
 with col4:
     # new apartments market share by city
-    df_share_city = df[df.city.isin(cities)][['date','city','market','area']] \
+    df_share_city = df_raw[df_raw.city.isin(cities)][['date','city','market','area']] \
         .pivot_table(index=['date','city'],
                     columns='market',
                     values='area',
@@ -141,7 +141,7 @@ with col5:
     st.plotly_chart(fig, theme='streamlit', use_container_width=True)
 
 with col6:
-    # priceless apartments market share
+    # priceless apartments market share by city
     df_share_p_city = df_raw[df_raw.city.isin(cities)]\
         [['date','is_price','price','city']].pivot_table(index=['date','city'],
                                                          columns='is_price',
