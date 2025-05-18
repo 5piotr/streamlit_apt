@@ -53,6 +53,8 @@ query2 = f'''
             id,
             date,
             city,
+            market,
+            area,
             price
         from apt_details_raw
         '''
@@ -99,8 +101,8 @@ with col3:
                                                         values='area',
                                                         aggfunc='count')
     df_share.reset_index(inplace=True)
-    df_share['new_apt_share'] = df_share.primary_market / \
-        (df_share.aftermarket + df_share.primary_market)
+    df_share['new_apt_share'] = df_share.pierwotny / \
+        (df_share.wtorny + df_share.pierwotny)
 
     fig = px.line(df_share, x='date', y='new_apt_share',
                 title='New apartments market share')
@@ -115,8 +117,8 @@ with col4:
                     values='area',
                     aggfunc='count')
     df_share_city.reset_index(inplace=True)
-    df_share_city['new_apt_share'] = df_share_city.primary_market / \
-        (df_share_city.aftermarket + df_share_city.primary_market)
+    df_share_city['new_apt_share'] = df_share_city.pierwotny / \
+        (df_share_city.wtorny + df_share_city.pierwotny)
 
     fig = px.line(df_share_city, x='date', y='new_apt_share', color='city',
                 title='New apartments market share by city',
